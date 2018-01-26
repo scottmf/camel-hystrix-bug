@@ -1,0 +1,73 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.8.RELEASE'
+        transmodeGradleVersion = '1.2'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+configurations {
+    all*.exclude group: 'org.springframework.boot', module:'spring-boot-starter-logging'
+    
+    providedRuntime
+}
+
+eclipse {
+    classpath {
+         downloadSources = true
+         downloadJavadoc = true
+    }
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'javax.servlet:javax.servlet-api'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-aop'
+    compile 'org.springframework.boot:spring-boot-autoconfigure'
+    compile 'org.springframework.boot:spring-boot-configuration-processor'
+    compile 'org.springframework.boot:spring-boot-starter-log4j2'
+
+    def camelVersion = '2.20.1'
+    compile "org.apache.camel:camel-spring:${camelVersion}"
+    compile "org.apache.camel:camel-spring-boot:${camelVersion}"
+    compile "org.apache.camel:camel-spring-javaconfig:${camelVersion}"
+    compile "org.apache.camel:camel-metrics:${camelVersion}"
+    compile "org.apache.camel:camel-disruptor:${camelVersion}"
+    compile "org.apache.camel:camel-spring-boot-starter:${camelVersion}"
+    compile "org.apache.camel:camel-hystrix:${camelVersion}"
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile "org.apache.camel:camel-test-spring:${camelVersion}"
+}
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.2'
+}
+
+bootRepackage {
+    mainClass = 'com.scottieknows.disruptor.CamelDisruptor'
+}
